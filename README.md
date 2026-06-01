@@ -110,13 +110,14 @@ uvicorn app:app --host 0.0.0.0 --port 7000
 
 ### Option 3: Manual install — Windows (PowerShell)
 ```powershell
-git clone <your-odysseus-repo-url>
+cd C:\Users
+git clone <your-odysseus-repo-url> odysseus
 cd odysseus
 python -m venv venv
-venv\Scripts\Activate.ps1
+.\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python setup.py
-uvicorn app:app --host 0.0.0.0 --port 7000
+uvicorn app:app --host 127.0.0.1 --port 7000
 ```
 
 Open `http://localhost:7000`, log in with the generated admin password,
