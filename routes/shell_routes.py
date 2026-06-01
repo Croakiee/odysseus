@@ -4,8 +4,13 @@ import asyncio
 import json
 import logging
 import os
-import pty
-import fcntl
+import sys
+if sys.platform != "win32":
+    import pty
+    import fcntl
+else:
+    pty = None
+    fcntl = None
 import shlex
 import shutil
 import uuid
@@ -380,11 +385,15 @@ def setup_shell_routes() -> APIRouter:
             )
 
         if use_pty:
+            if sys.platform == "win32":
+                async def no_pty():
+                    yield f"data: {json.dumps({'stream': 'stderr', 'data': 'PTY mode is not supported on Windows'})}\n\n"
+                    yield f"data: {json.dumps({'exit_code': -1})}\n\n"
+                return StreamingResponse(no_pty(), media_type="text/event-stream")
             return StreamingResponse(
                 _generate_pty(cmd, timeout, request),
                 media_type="text/event-stream",
             )
-
         async def generate():
             proc = None
             reader_tasks = []
